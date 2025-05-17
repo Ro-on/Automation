@@ -32,24 +32,31 @@ class TestUserAddToBasketFromProductPage():
      page.should_not_be_success_message() # проверка, что юзер не видит уведомление об успешном добавлении товара в корзину
      
     @pytest.mark.need_review
+    #@pytest.mark.parametrize('offer', ['?promo=offer0', '?promo=offer1', '?promo=offer2', '?promo=offer3', '?promo=offer4', '?promo=offer5', '?promo=offer6', pytest.param('?promo=offer7', marks=pytest.mark.xfail), '?promo=offer8', '?promo=offer9'])
     def test_user_can_add_product_to_basket(self, r_browser):
+     #link = f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/{offer}" # offer добавить в параметр (после r_browser)
      link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
      page = ProductPage(r_browser, link)
      page.open()
-     r_browser.implicitly_wait(5)
      page.add_to_bucket()
-     r_browser.implicitly_wait(5)
+     #page.alert_solve_quiz_and_get_code()
+     time.sleep(3)
      page.should_be_right_book()
-     page.should_be_right_price() # проверка добавления юзером товара в корзину
+     page.should_be_right_price() # проверка добавления юзером товара в корзину и проверка корректного названия книги и цены
      # иногда может не запуститься с первого раза(из-за ожидания)! Если было провалено - запустить тест снова.
      
 @pytest.mark.need_review
+#@pytest.mark.parametrize('offer', ['?promo=offer0', '?promo=offer1', '?promo=offer2', '?promo=offer3', '?promo=offer4', '?promo=offer5', '?promo=offer6', pytest.param('?promo=offer7', marks=pytest.mark.xfail), '?promo=offer8', '?promo=offer9'])
 def test_guest_can_add_product_to_basket(r_browser):
+    #link = f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/{offer}" # offer добавить в параметр (после r_browser)
     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
     page = ProductPage(r_browser, link)
     page.open()
-    
-    page.add_to_bucket() # проверка добавления товара в корзину для гостя
+    page.add_to_bucket()
+    #page.alert_solve_quiz_and_get_code()
+    time.sleep(3)
+    page.should_be_right_book()
+    page.should_be_right_price() # проверка добавления товара в корзину для гостя и проверка корректного названия книги и цены
     
 @pytest.mark.xfail
 def test_guest_cant_see_success_message_after_adding_product_to_basket(r_browser):
