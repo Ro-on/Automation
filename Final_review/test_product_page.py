@@ -6,6 +6,43 @@ import pytest
 
 # pytest -v --tb=line --language=en -m need_review
 
+@pytest.mark.user   
+class TestUserAddToBasketFromProductPage():
+    
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, r_browser):
+        
+        link = "http://selenium1py.pythonanywhere.com/ru/accounts/login/"
+        page = LoginPage(r_browser, link)
+        page.open()
+        
+        email = str(time.time()) + "@fakemail.org"
+        password = str(time.time()) + "password"
+        page.register_new_user(email, password)
+        
+        page.should_be_authorized_user() # сетап авторизации гостя
+    
+    @pytest.mark.xfail
+    def test_user_cant_see_success_message_after_adding_product_to_basket(self, r_browser):
+     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+     page = ProductPage(r_browser, link)
+     page.open()
+    
+     page.add_to_bucket()
+     page.should_not_be_success_message() # проверка, что юзер не видит уведомление об успешном добавлении товара в корзину
+     
+    @pytest.mark.need_review
+    def test_user_can_add_product_to_basket(self, r_browser):
+     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+     page = ProductPage(r_browser, link)
+     page.open()
+     r_browser.implicitly_wait(5)
+     page.add_to_bucket()
+     r_browser.implicitly_wait(5)
+     page.should_be_right_book()
+     page.should_be_right_price() # проверка добавления юзером товара в корзину
+     # иногда может не запуститься с первого раза(из-за ожидания)! Если было провалено - запустить тест снова.
+     
 @pytest.mark.need_review
 def test_guest_can_add_product_to_basket(r_browser):
     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
@@ -63,41 +100,6 @@ def test_guest_can_see_empty_basket_opened_from_product_page(r_browser):
     basket_page = BasketPage(r_browser, r_browser.current_url)
     basket_page.should_be_empty_basket() # проверка, что в корзине нету товара для гостя. Негатив-тест верхней проверки(он не отрицательный!)
     
-@pytest.mark.user   
-class TestUserAddToBasketFromProductPage():
-    
-    @pytest.fixture(scope="function", autouse=True)
-    def setup(self, r_browser):
-        
-        link = "http://selenium1py.pythonanywhere.com/ru/accounts/login/"
-        page = LoginPage(r_browser, link)
-        page.open()
-        
-        email = str(time.time()) + "@fakemail.org"
-        password = str(time.time()) + "password"
-        page.register_new_user(email, password)
-        
-        page.should_be_authorized_user() # сетап авторизации гостя
-    
-    @pytest.mark.xfail
-    def test_user_cant_see_success_message_after_adding_product_to_basket(self, r_browser):
-     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
-     page = ProductPage(r_browser, link)
-     page.open()
-    
-     page.add_to_bucket()
-     page.should_not_be_success_message() # проверка, что юзер не видит уведомление об успешном добавлении товара в корзину
-     
-    @pytest.mark.need_review
-    def test_user_can_add_product_to_basket(self, r_browser):
-     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
-     page = ProductPage(r_browser, link)
-     page.open()
-     r_browser.implicitly_wait(5)
-     page.add_to_bucket()
-     r_browser.implicitly_wait(5)
-     page.should_be_right_book()
-     page.should_be_right_price() # проверка добавления юзером товара в корзину
-     # иногда может не запуститься с первого раза(из-за ожидания)! Если было провалено - запустить тест снова.
+
      
     
