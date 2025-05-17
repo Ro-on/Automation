@@ -5,21 +5,20 @@ import time
 import pytest
 
 # pytest -v --tb=line --language=en -m need_review
+# в test_user_can_add_product_to_basket и test_guest_can_add_product_to_basket есть тесты с промо ссылками. Для правильной работы с ними
+# нужно откомментировать @pytest.parametrize, ссылку с offer, alert, и добавить offer в параметры теста (self, browser, offer). Закомментить другую ссылку
 
 @pytest.mark.user   
 class TestUserAddToBasketFromProductPage():
     
     @pytest.fixture(scope="function", autouse=True)
     def setup(self, r_browser):
-        
         link = "http://selenium1py.pythonanywhere.com/ru/accounts/login/"
         page = LoginPage(r_browser, link)
         page.open()
-        
         email = str(time.time()) + "@fakemail.org"
         password = str(time.time()) + "password"
         page.register_new_user(email, password)
-        
         page.should_be_authorized_user() # сетап авторизации гостя
     
     @pytest.mark.xfail
