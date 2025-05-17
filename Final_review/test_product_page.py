@@ -51,6 +51,7 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(r_browser):
     page = ProductPage(r_browser, link)
     page.open()
     page.go_to_basket_page()
+    r_browser.implicitly_wait(5)
     basket_page = BasketPage(r_browser, r_browser.current_url)
     basket_page.should_be_empty_basket_message() # проверка, что есть сообщение о пустой корзине для гостя
     
@@ -92,10 +93,11 @@ class TestUserAddToBasketFromProductPage():
      link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
      page = ProductPage(r_browser, link)
      page.open()
-    
+     r_browser.implicitly_wait(5)
      page.add_to_bucket()
-    
+     r_browser.implicitly_wait(5)
      page.should_be_right_book()
      page.should_be_right_price() # проверка добавления юзером товара в корзину
+     # иногда может не запуститься с первого раза(из-за ожидания)! Если было провалено - запустить тест снова.
      
     
